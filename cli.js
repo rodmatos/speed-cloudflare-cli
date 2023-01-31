@@ -217,10 +217,10 @@ function logLatency(data) {
   console.log(bold('          Jitter:', magenta(`${data[4].toFixed(2)} ms`)));
 }
 
-function logSpeedTestResult(size, test) {
+function logSpeedTestResult(size, test, type) {
   const speed = stats.median(test).toFixed(2);
   console.log(
-    bold(' '.repeat(9 - size.length), size, 'speed:', yellow(`${speed} Mbps`))
+    bold(' '.repeat(9 - size.length), type, size, 'speed:', yellow(`${speed} Mbps`))
   );
 }
 
@@ -256,19 +256,19 @@ async function speedTest() {
   logLatency(ping);
 
   const testDown1 = await measureDownload(101000, 10);
-  logSpeedTestResult('100kB', testDown1);
+  logSpeedTestResult('100kB', testDown1, 'Download');
 
   const testDown2 = await measureDownload(1001000, 8);
-  logSpeedTestResult('1MB', testDown2);
+  logSpeedTestResult('1MB', testDown2, 'Download');
 
   const testDown3 = await measureDownload(10001000, 6);
-  logSpeedTestResult('10MB', testDown3);
+  logSpeedTestResult('10MB', testDown3, 'Download');
 
   const testDown4 = await measureDownload(25001000, 4);
-  logSpeedTestResult('25MB', testDown4);
+  logSpeedTestResult('25MB', testDown4, 'Download');
 
   const testDown5 = await measureDownload(100001000, 1);
-  logSpeedTestResult('100MB', testDown5);
+  logSpeedTestResult('100MB', testDown5, 'Download');
 
   const downloadTests = [
     ...testDown1,
@@ -280,9 +280,21 @@ async function speedTest() {
   logDownloadSpeed(downloadTests);
 
   const testUp1 = await measureUpload(11000, 10);
-  const testUp2 = await measureUpload(101000, 10);
-  const testUp3 = await measureUpload(1001000, 8);
-  const uploadTests = [...testUp1, ...testUp2, ...testUp3];
+  logSpeedTestResult('100kB', testUp1, 'Upload');
+
+  const testUp2 = await measureUpload(101000, 8);
+  logSpeedTestResult('1MB', testUp2, 'Upload');
+
+  const testUp3 = await measureUpload(1001000, 6);
+  logSpeedTestResult('10MB', testUp3, 'Upload');
+
+  const testUp4 = await measureUpload(25001000, 4);
+  logSpeedTestResult('25MB', testUp4, 'Upload');
+
+  const testUp5 = await measureUpload(100001000, 1);
+  logSpeedTestResult('100MB', testUp5, 'Upload');
+
+  const uploadTests = [...testUp1, ...testUp2, ...testUp3, ...testUp4, ...testUp5];
   logUploadSpeed(uploadTests);
 }
 
